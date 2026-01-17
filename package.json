@@ -1,0 +1,206 @@
+{
+  "name": "aegis-assist",
+  "displayName": "AEGISassist",
+  "description": "AI-powered security scanner with automatic vulnerability detection and fix generation",
+  "version": "0.1.0",
+  "publisher": "kkartikaggarwal",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "security",
+    "sast",
+    "vulnerability",
+    "code analysis",
+    "ai",
+    "llm",
+    "aegis"
+  ],
+  "icon": "assets/icon.png",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aegisAssist.scanFile",
+        "title": "AEGISassist: Scan Current File",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "aegisAssist.scanWorkspace",
+        "title": "AEGISassist: Scan Workspace",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "aegisAssist.clearFindings",
+        "title": "AEGISassist: Clear All Findings"
+      },
+      {
+        "command": "aegisAssist.showFindingDetails",
+        "title": "AEGISassist: Show Finding Details"
+      },
+      {
+        "command": "aegisAssist.fixAll",
+        "title": "AEGISassist: Fix All",
+        "icon": "$(wand)"
+      }
+    ],
+    "configuration": {
+      "title": "AEGISassist",
+      "properties": {
+        "aegisAssist.semgrepPath": {
+          "type": "string",
+          "default": "semgrep",
+          "description": "Path to Semgrep executable"
+        },
+        "aegisAssist.ruleConfig": {
+          "type": "string",
+          "default": "auto",
+          "description": "Semgrep rule configuration (e.g., 'auto', 'p/owasp-top-ten', 'p/security-audit', 'p/javascript')"
+        },
+        "aegisAssist.llmProvider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "gemini",
+            "ollama",
+            "nebius"
+          ],
+          "default": "nebius",
+          "description": "LLM provider for false positive detection"
+        },
+        "aegisAssist.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API key"
+        },
+        "aegisAssist.openaiModel": {
+          "type": "string",
+          "default": "gpt-4o-mini",
+          "description": "OpenAI model to use"
+        },
+        "aegisAssist.geminiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Google AI (Gemini) API key"
+        },
+        "aegisAssist.ollamaEndpoint": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Ollama API endpoint"
+        },
+        "aegisAssist.ollamaModel": {
+          "type": "string",
+          "default": "llama3.2",
+          "description": "Ollama model to use"
+        },
+        "aegisAssist.nebiusApiKey": {
+          "type": "string",
+          "default": "v1.CmQKHHN0YXRpY2tleS1lMDBmZGgxMHdjMzFhZjRnMnMSIXNlcnZpY2VhY2NvdW50LWUwMG44dDRwbWpkZGhua3oxazIMCPjpqMsGELGox6MCOgwI9-zAlgcQwJr7zwNAAloDZTAw.AAAAAAAAAAFxXC1HfyFGSHz34UhqmHSvrNaz5VpAypsgrq2TzkkCRxoVou6FczThTb81dAWyuzVSOf3Wdc0SC1n177_hPoQF",
+          "description": "Nebius API key for Kimi-K2 model"
+        },
+        "aegisAssist.nebiusModel": {
+          "type": "string",
+          "default": "moonshotai/Kimi-K2-Thinking",
+          "description": "Nebius model to use"
+        },
+        "aegisAssist.confidenceThreshold": {
+          "type": "number",
+          "default": 70,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum confidence score (0-100) to show a finding. Lower values show more findings."
+        },
+        "aegisAssist.scanOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically scan files on save"
+        },
+        "aegisAssist.enableLlmAnalysis": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable LLM-based false positive filtering"
+        },
+        "aegisAssist.maxConcurrentAnalysis": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 20,
+          "description": "Maximum number of concurrent LLM analysis requests"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "aegisAssist",
+          "title": "AEGISassist",
+          "icon": "assets/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "aegisAssist": [
+        {
+          "id": "aegisAssist.findings",
+          "name": "Security Findings"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "aegisAssist.scanFile",
+          "when": "view == aegisAssist.findings",
+          "group": "navigation"
+        },
+        {
+          "command": "aegisAssist.scanWorkspace",
+          "when": "view == aegisAssist.findings",
+          "group": "navigation"
+        },
+        {
+          "command": "aegisAssist.fixAll",
+          "when": "view == aegisAssist.findings",
+          "group": "navigation"
+        },
+        {
+          "command": "aegisAssist.clearFindings",
+          "when": "view == aegisAssist.findings"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "aegisAssist.scanFile",
+          "group": "navigation",
+          "when": "editorLangId"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "openai": "^4.20.0"
+  }
+}

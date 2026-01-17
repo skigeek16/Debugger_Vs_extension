@@ -1,0 +1,9 @@
+.vscode-test/
+out/
+node_modules/
+*.vsix
+.DS_Store
+
+# Test files with fake secrets (blocked by GitHub)
+test-files/super_vulnerable.js
+test-files/super_vulnerable.py
